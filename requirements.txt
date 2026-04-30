@@ -1,0 +1,13 @@
+llama-index==0.11.23
+llama-index-embeddings-huggingface==0.3.1
+llama-index-vector-stores-pinecone==0.2.1
+llama-index-llms-ollama==0.3.4
+pinecone==5.0.1
+fastapi==0.115.5
+uvicorn==0.32.1
+python-multipart==0.0.17
+sentence-transformers==3.3.1
+pypdf==5.1.0
+python-dotenv==1.0.1
+httpx==0.28.0
+pytest==8.3.4

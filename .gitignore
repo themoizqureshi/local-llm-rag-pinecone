@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+*.so
+.DS_Store
+results/*.csv
+results/*.png
+mlruns/
+chroma_db/
