@@ -12,3 +12,7 @@ results/*.csv
 results/*.png
 mlruns/
 chroma_db/
+
+# Private docs
+docs/how_it_works.md
+docs/interview_prep.md

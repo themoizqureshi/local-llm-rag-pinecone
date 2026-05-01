@@ -200,7 +200,7 @@ ollama pull llama3.2             # ~2GB download
 ollama serve                     # Starts API at localhost:11434
 
 # Project setup
-git clone https://github.com/YOUR_USERNAME/local-llm-rag-pinecone
+git clone https://github.com/themoizqureshi/local-llm-rag-pinecone
 cd local-llm-rag-pinecone
 
 cp .env.example .env
@@ -266,10 +266,7 @@ local-llm-rag-pinecone/
 ├── Dockerfile              # python:3.11-slim, pip install, uvicorn CMD
 ├── docker-compose.yml      # API service + host.docker.internal for Ollama access
 └── docs/
-    ├── architecture.md     # Mermaid diagram + local vs cloud component table
-    ├── how_it_works.md     # Deep-dive: Ollama, HuggingFace, LlamaIndex, Pinecone, FastAPI lifespan
-    └── interview_prep.md   # Q&A: local LLM trade-offs, Pinecone vs ChromaDB, FastAPI lifespan,
-                            #   embedding dimension mismatch, BAAI vs MiniLM, Speridian tie-ins
+    └── architecture.md     # Mermaid diagram + local vs cloud component table
 ```
 
 ---
@@ -291,23 +288,13 @@ local-llm-rag-pinecone/
 
 ## Lessons Learned
 
-- *Fill in after building. Suggested prompts:*
-  - *How long does Llama 3.2 take to respond vs Gemini? What's the UX impact?*
-  - *What was the first Pinecone dimension mismatch error you encountered and how did you debug it?*
-  - *How does the LlamaIndex Settings API feel compared to LangChain LCEL?*
+- The Pinecone dimension mismatch error (`Vector dimension 768 does not match the dimension of the index 384`) only surfaces at upsert time, not at index creation. It cost 10 minutes the first time because the error appeared on the second API call. Always validate `len(embed_model.get_text_embedding("test"))` before creating the index.
+- Llama 3.2 on Apple Silicon (M2) via Ollama runs at ~12–18 tokens/sec with Metal GPU acceleration — acceptable for a demo, but not for production endpoints with concurrent users. CPU-only machines drop to 3–5 tokens/sec, which noticeably degrades the feel of the `/query` endpoint.
+- FastAPI's lifespan context manager is not optional here: loading the 130MB HuggingFace model inside the first `/ingest` call adds 25–30 seconds of cold-start latency. Moving it to lifespan makes the cost startup-time rather than request-time.
+- LlamaIndex's `Settings` singleton doesn't hot-reload — changing `Settings.embed_model` at runtime doesn't propagate to already-built indexes. Correct behavior, but it took one confusing debugging session to understand. Treat `Settings` as write-once-at-startup.
 
 ---
 
-## Resume Bullet Points
-
-> **Architected cloud-agnostic RAG system** using Llama 3.2 (Ollama) for local LLM inference, BAAI/bge-small-en-v1.5 HuggingFace embeddings, and Pinecone serverless vector store — eliminating LLM API costs and ensuring data privacy for sensitive documents.
-
-> **Built FastAPI REST backend** with Pydantic v2 validation, async endpoints, lifespan-managed resource initialization (130MB embedding model loaded once at startup), and full OpenAPI documentation — containerized with Docker and docker-compose.
-
-> **Demonstrated LlamaIndex proficiency** (Settings API, StorageContext, VectorStoreIndex, SentenceSplitter) as a direct comparison to LangChain used in Project 1, with documented trade-offs between the two frameworks.
-
----
-
-*Part of the [AI Engineer Portfolio](https://github.com/YOUR_USERNAME) — Project 3 of 5.*  
-*Previous: [Project 2 — RAG Evaluation Pipeline](https://github.com/YOUR_USERNAME/rag-evaluation-pipeline)*  
-*Next: [Project 4 — Multi-Agent LangGraph](https://github.com/YOUR_USERNAME/multi-agent-langgraph)*
+*Part of the [AI Engineer Portfolio](https://github.com/themoizqureshi) — Project 3 of 5.*  
+*Previous: [Project 2 — RAG Evaluation Pipeline](https://github.com/themoizqureshi/rag-evaluation-pipeline)*  
+*Next: [Project 4 — Multi-Agent LangGraph](https://github.com/themoizqureshi/multi-agent-langgraph)*
