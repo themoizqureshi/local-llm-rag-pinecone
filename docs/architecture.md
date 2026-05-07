@@ -14,7 +14,7 @@ graph TD
     E --> H
     H --> I["Retrieved Context Nodes"]
     I --> J["RetrieverQueryEngine\nInjects context into prompt"]
-    J --> K["Llama 3.2 (via Ollama)\nlocal HTTP server\ntemperature=0"]
+    J --> K["Llama 3.2:3b (via Ollama)\nlocal HTTP server\ntemperature=0"]
     K --> L["Answer\nQueryResponse JSON"]
 
     M["FastAPI lifespan"] -.->|"init once"| D
@@ -26,7 +26,7 @@ graph TD
 | Component | Where It Runs | Notes |
 |-----------|--------------|-------|
 | FastAPI app | Local / Docker | `uvicorn src.api:app` |
-| Llama 3.2 | Local (Ollama) | `ollama run llama3.2` |
+| Llama 3.2 | Local (Ollama) | `ollama run llama3.2:3b` |
 | HuggingFace embeddings | Local | Downloaded to `~/.cache/huggingface` |
 | Pinecone index | Cloud (free tier) | Managed, serverless, 1 free index |
 
@@ -35,8 +35,8 @@ graph TD
 | Dimension | Project 1 | Project 3 |
 |-----------|-----------|-----------|
 | Framework | LangChain LCEL | LlamaIndex Settings API |
-| LLM | Gemini 2.0 Flash (API) | Llama 3.2 (local via Ollama) |
-| Embeddings | Google text-embedding-004 (API) | BAAI/bge-small-en-v1.5 (local) |
+| LLM | Gemini 2.0 Flash via OpenRouter | Llama 3.2:3b (local via Ollama) |
+| Embeddings | BAAI/bge-small-en-v1.5 (local) | BAAI/bge-small-en-v1.5 (local) |
 | Vector Store | ChromaDB (local disk) | Pinecone (managed cloud) |
 | Interface | Streamlit UI | FastAPI REST API |
 | API Key Required | GOOGLE_API_KEY | PINECONE_API_KEY only |

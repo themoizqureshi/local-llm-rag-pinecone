@@ -3,10 +3,20 @@
 > Same RAG concept as Project 1 — but entirely cloud-agnostic for the LLM and embeddings, production-grade for the vector store, and exposed as a proper REST API instead of a demo UI. **Proves you're not locked to OpenAI or any cloud LLM provider.**
 
 ![Python](https://img.shields.io/badge/python-3.11-blue)
-![LlamaIndex](https://img.shields.io/badge/LlamaIndex-0.11-orange)
+![LlamaIndex](https://img.shields.io/badge/LlamaIndex_core-0.14-orange)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)
 ![Pinecone](https://img.shields.io/badge/Pinecone-serverless-purple)
 ![Docker](https://img.shields.io/badge/Docker-containerized-blue)
+
+---
+
+## Recent Changes
+
+| Date | Change | Reason |
+|------|--------|--------|
+| May 2026 | Upgraded `llama-index-llms-ollama` 0.3.4 → 0.10.1, `llama-index-core` → 0.14.21 | `ollama==0.6.x` removed the `usage` field from `ChatResponse`; older LlamaIndex Ollama integration crashed on every query |
+| May 2026 | Changed model name `llama3.2` → `llama3.2:3b` in config | Ollama stores the model under the explicit `:3b` tag when pulled with `ollama pull llama3.2:3b`; bare name returns 404 |
+| May 2026 | Added `llama-index-core==0.14.21` to `requirements.txt` | Pin core version explicitly to avoid silent mismatches with integration packages |
 
 ---
 
@@ -82,7 +92,7 @@ Ollama runs Llama 3.2 as a local HTTP server on port `11434`. The model is store
 from llama_index.llms.ollama import Ollama
 
 Settings.llm = Ollama(
-    model="llama3.2",
+    model="llama3.2:3b",
     base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
     request_timeout=120.0,  # CPU inference can take 10-30s
     temperature=0.0,
@@ -196,7 +206,7 @@ Without lifespan: loading the 130MB HuggingFace model inside `/ingest` adds 30 s
 ```bash
 # Prerequisites (one-time)
 brew install ollama              # or: curl -fsSL https://ollama.com/install.sh | sh
-ollama pull llama3.2             # ~2GB download
+ollama pull llama3.2:3b          # ~2GB download (use :3b tag explicitly)
 ollama serve                     # Starts API at localhost:11434
 
 # Project setup
@@ -226,11 +236,11 @@ curl -X POST http://localhost:8000/ingest \
 curl -X POST http://localhost:8000/query \
   -H "Content-Type: application/json" \
   -d '{"question": "What is the main finding of this document?"}'
-# → {"answer": "...", "model": "llama3.2"}
+# → {"answer": "...", "model": "llama3.2:3b"}
 
 # Health check
 curl http://localhost:8000/health
-# → {"status": "ok", "model": "llama3.2", "vectorstore": "pinecone", "document_loaded": true}
+# → {"status": "ok", "model": "llama3.2:3b", "vectorstore": "pinecone", "document_loaded": true}
 ```
 
 ## Running with Docker

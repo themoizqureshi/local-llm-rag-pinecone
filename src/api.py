@@ -83,7 +83,7 @@ class QueryRequest(BaseModel):
 
 class QueryResponse(BaseModel):
     answer: str
-    model: str = "llama3.2"
+    model: str = "llama3.2:3b"
 
 
 class IngestResponse(BaseModel):
@@ -97,7 +97,7 @@ class IngestResponse(BaseModel):
 async def health():
     return {
         "status": "ok",
-        "model": "llama3.2",
+        "model": "llama3.2:3b",
         "vectorstore": "pinecone",
         "document_loaded": state.query_engine is not None,
     }

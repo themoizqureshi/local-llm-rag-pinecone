@@ -31,7 +31,7 @@ def test_health_returns_ok(client):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
-    assert data["model"] == "llama3.2"
+    assert data["model"] == "llama3.2:3b"
     assert data["vectorstore"] == "pinecone"
     assert data["document_loaded"] is False
 
@@ -85,4 +85,4 @@ def test_query_after_ingest_returns_answer(client):
     assert response.status_code == 200
     data = response.json()
     assert data["answer"] == "The document discusses RAG architecture."
-    assert data["model"] == "llama3.2"
+    assert data["model"] == "llama3.2:3b"

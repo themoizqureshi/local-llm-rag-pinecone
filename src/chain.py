@@ -36,7 +36,7 @@ def configure_settings(embed_model) -> None:
     """
     Settings.embed_model = embed_model
     Settings.llm = Ollama(
-        model="llama3.2",
+        model="llama3.2:3b",
         base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         request_timeout=120.0,  # CPU inference is slow — give it time
         temperature=0.0,
