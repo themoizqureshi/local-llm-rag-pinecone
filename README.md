@@ -260,6 +260,44 @@ pytest tests/ -v
 
 ---
 
+## Testing with Your Own Data
+
+**Prerequisites (one-time setup):**
+```bash
+# 1. Install and start Ollama
+curl -fsSL https://ollama.ai/install.sh | sh
+ollama serve                    # keep running in a terminal
+ollama pull llama3.2:3b         # ~2 GB download
+
+# 2. Get a free Pinecone key at pinecone.io → add to .env:
+# PINECONE_API_KEY=pcsk_...
+```
+
+**Run the Streamlit UI:**
+```bash
+streamlit run app.py
+# Opens at http://localhost:8501
+# The sidebar shows ✅/❌ status for Ollama and Pinecone
+```
+
+**Or use the FastAPI directly:**
+```bash
+uvicorn src.api:app --reload --port 8000
+
+# Upload a PDF:
+curl -X POST http://localhost:8000/ingest \
+  -F "file=@your_document.pdf"
+
+# Ask a question:
+curl -X POST http://localhost:8000/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What is this document about?"}'
+```
+
+**Any PDF works.** The embedding model (BAAI/bge-small-en-v1.5) and LLM (llama3.2:3b) are both local — no cloud API calls after the one-time model downloads. First ingest downloads the ~90 MB embedding model.
+
+---
+
 ## Project Structure
 
 ```
